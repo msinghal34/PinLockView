@@ -1,57 +1,43 @@
 # PinLockView
 A clean, minimalistic, easy-to-use and highly customizable pin lock custom view for Android.
 
-### Specs
-[ ![Download](https://api.bintray.com/packages/aritraroy/maven/pin-lock-view/images/download.svg) ](https://bintray.com/aritraroy/maven/pin-lock-view/_latestVersion) [![API](https://img.shields.io/badge/API-11%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=11) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-PinLockView-green.svg?style=true)](https://android-arsenal.com/details/1/3706)
-
-![PinLockView](https://github.com/aritraroy/PinLockView/blob/master/screens/logo.png)
+![PinLockView](https://github.com/msinghal34/PinLockView/blob/master/screens/logo.png)
 
 This library allows you to implement a pin lock mechanism in your app **easily and quickly**. There are **plenty of customization options** available to change the look-and-feel of this view to match your app's theme.
 
 You can also use it as a dial pad to dial numbers. There are several other use cases of this library and is not restricted to only pin locking.
 
-![PinLockView](https://github.com/aritraroy/PinLockView/blob/master/screens/promo.png)
+![PinLockView](https://github.com/msinghal34/PinLockView/blob/master/screens/promo.png)
 
-# Download
+## Usage
 
-This library is available in **jCenter** which is the default Maven repository used in Android Studio.
-
-## Gradle 
-```gradle
-dependencies {
-    // other dependencies here
-    
-    implementation 'com.andrognito.pinlockview:pinlockview:2.1.0'
+### Gradle
+Top level build file:
+``` gradle
+allprojects {
+    repositories {
+        mavenCentral()
+    	maven { url 'https://www.jitpack.io' }
+    }
 }
 ```
-
-## Maven
-
-```xml
-<dependency>
-  <groupId>com.andrognito.pinlockview</groupId>
-  <artifactId>pinlockview</artifactId>
-  <version>2.1.0</version>
-  <type>pom</type>
-</dependency>
+In your application build file:
+``` gradle
+    implementation 'com.msinghal34.pinlockview:pinlockview:2.1.0'
 ```
 
-# Usage
-We recommend you to **check the sample app** to get a complete understanding of the library. The step-by-step implementation guide is as follows.
-
-### Step 1
+### XML
 
 Place the view in your XML layout file.
 
 ```xml
-    <com.andrognito.pinlockview.PinLockView
+    <com.msinghal34.pinlockview.PinLockView
         android:id="@+id/pin_lock_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 ```
 
-### Step 2
-
+### Java
 Reference the view in code and add a listener to it.
 
 ```java
@@ -94,7 +80,7 @@ This **view has been decoupled from the PinLockView** so that you can optionally
 Add the view to you XML layout, generally placed above your PinLockView,
 
 ```xml
- <com.andrognito.pinlockview.IndicatorDots
+ <com.msinghal34.pinlockview.IndicatorDots
         android:id="@+id/indicator_dots"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -136,28 +122,17 @@ There are several theming options available through XML attributes which you can
 
 This library is quite exhaustive and offers a lot of customization options. If you find a bug or would like to improve any aspect of it, feel free to contribute with pull requests.
 
-# About The Author
-
-### Aritra Roy
-
-Android & Backend Developer. Blogger. Designer. Fitness Enthusiast.
-
-<a href="https://play.google.com/store/apps/details?id=com.codexapps.andrognito&hl=en" target="_blank"><img src="https://github.com/aritraroy/social-icons/blob/master/play-store-icon.png?raw=true" width="60"></a> <a href="https://blog.aritraroy.in/" target="_blank"><img src="https://github.com/aritraroy/social-icons/blob/master/medium-icon.png?raw=true" width="60"></a>
-<a href="http://stackoverflow.com/users/2858654/aritra-roy" target="_blank"><img src="https://github.com/aritraroy/social-icons/blob/master/stackoverflow-icon.png?raw=true" width="60"></a>
-<a href="https://twitter.com/aritraroy" target="_blank"><img src="https://github.com/aritraroy/social-icons/blob/master/twitter-icon.png?raw=true" width="60"></a>
-<a href="http://linkedin.com/in/aritra-roy"><img src="https://github.com/aritraroy/social-icons/blob/master/linkedin-icon.png?raw=true" width="60"></a>
-
+# Forked from
+https://github.com/aritraroy/PinLockView
 
 # License
 
 ```
-Copyright 2017 aritraroy
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+You may obtain a copy of the License at   
 
-   http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,

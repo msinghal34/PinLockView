@@ -1,11 +1,12 @@
-package com.andrognito.pinlockview;
+package com.msinghal34.pinlockview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Represents a numeric lock view which can used to taken numbers as input.
@@ -32,10 +33,7 @@ public class PinLockView extends RecyclerView {
     private IndicatorDots mIndicatorDots;
     private PinLockAdapter mAdapter;
     private PinLockListener mPinLockListener;
-    private CustomizationOptionsBundle mCustomizationOptionsBundle;
-    private int[] mCustomKeySet;
-
-    private PinLockAdapter.OnNumberClickListener mOnNumberClickListener
+    private final PinLockAdapter.OnNumberClickListener mOnNumberClickListener
             = new PinLockAdapter.OnNumberClickListener() {
         @Override
         public void onNumberClicked(int keyValue) {
@@ -79,8 +77,7 @@ public class PinLockView extends RecyclerView {
             }
         }
     };
-
-    private PinLockAdapter.OnDeleteClickListener mOnDeleteClickListener
+    private final PinLockAdapter.OnDeleteClickListener mOnDeleteClickListener
             = new PinLockAdapter.OnDeleteClickListener() {
         @Override
         public void onDeleteClicked() {
@@ -119,6 +116,8 @@ public class PinLockView extends RecyclerView {
             }
         }
     };
+    private CustomizationOptionsBundle mCustomizationOptionsBundle;
+    private int[] mCustomKeySet;
 
     public PinLockView(Context context) {
         super(context);

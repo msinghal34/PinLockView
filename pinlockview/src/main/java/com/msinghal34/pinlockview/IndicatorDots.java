@@ -1,14 +1,15 @@
-package com.andrognito.pinlockview;
+package com.msinghal34.pinlockview;
 
 import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.IntDef;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import androidx.annotation.IntDef;
+import androidx.core.view.ViewCompat;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -21,23 +22,13 @@ import java.lang.annotation.RetentionPolicy;
  */
 public class IndicatorDots extends LinearLayout {
 
-    @IntDef({IndicatorType.FIXED, IndicatorType.FILL, IndicatorType.FILL_WITH_ANIMATION})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface IndicatorType {
-        int FIXED = 0;
-        int FILL = 1;
-        int FILL_WITH_ANIMATION = 2;
-    }
-
     private static final int DEFAULT_PIN_LENGTH = 4;
-
-    private int mDotDiameter;
-    private int mDotSpacing;
-    private int mFillDrawable;
-    private int mEmptyDrawable;
+    private final int mDotDiameter;
+    private final int mDotSpacing;
+    private final int mFillDrawable;
+    private final int mEmptyDrawable;
     private int mPinLength;
     private int mIndicatorType;
-
     private int mPreviousLength;
 
     public IndicatorDots(Context context) {
@@ -168,5 +159,13 @@ public class IndicatorDots extends LinearLayout {
         this.mIndicatorType = type;
         removeAllViews();
         initView(getContext());
+    }
+
+    @IntDef({IndicatorType.FIXED, IndicatorType.FILL, IndicatorType.FILL_WITH_ANIMATION})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface IndicatorType {
+        int FIXED = 0;
+        int FILL = 1;
+        int FILL_WITH_ANIMATION = 2;
     }
 }

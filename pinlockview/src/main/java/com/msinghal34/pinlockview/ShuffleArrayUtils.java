@@ -1,4 +1,4 @@
-package com.andrognito.pinlockview;
+package com.msinghal34.pinlockview;
 
 import java.util.Random;
 

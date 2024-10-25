@@ -1,9 +1,9 @@
-package com.andrognito.pinlockview;
+package com.msinghal34.pinlockview;
 
 /**
  * The listener that triggers callbacks for various events
  * in the {@link PinLockView}
- *
+ * <p>
  * Created by aritraroy on 31/05/16.
  */
 public interface PinLockListener {

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mine_shaft"
-    tools:context="com.andrognito.pinlockviewapp.SampleActivity">
+    tools:context="com.msinghal34.pinlockviewapp.SampleActivity">
 
     <ImageView
         android:id="@+id/profile_image"
@@ -29,7 +29,7 @@
         android:textColor="@color/white"
         android:textSize="34sp" />
 
-    <com.andrognito.pinlockview.IndicatorDots
+    <com.msinghal34.pinlockview.IndicatorDots
         android:id="@+id/indicator_dots"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="36dp" />
 
-    <com.andrognito.pinlockview.PinLockView
+    <com.msinghal34.pinlockview.PinLockView
         android:id="@+id/pin_lock_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
