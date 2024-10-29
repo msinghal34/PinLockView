@@ -3,8 +3,6 @@ package com.msinghal34.pinlockview;
 /**
  * The listener that triggers callbacks for various events
  * in the {@link PinLockView}
- * <p>
- * Created by aritraroy on 31/05/16.
  */
 public interface PinLockListener {
 
@@ -14,7 +12,7 @@ public interface PinLockListener {
      *
      * @param pin the complete pin
      */
-    void onComplete(String pin);
+    Boolean onComplete(String pin);
 
 
     /**

@@ -8,9 +8,6 @@ import androidx.annotation.DimenRes;
 import androidx.annotation.DrawableRes;
 import androidx.core.content.ContextCompat;
 
-/**
- * Created by aritraroy on 10/06/16.
- */
 public class ResourceUtils {
 
     private ResourceUtils() {

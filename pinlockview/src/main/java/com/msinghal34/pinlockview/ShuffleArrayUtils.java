@@ -2,10 +2,6 @@ package com.msinghal34.pinlockview;
 
 import java.util.Random;
 
-/**
- * Created by aritraroy on 10/03/17.
- */
-
 public class ShuffleArrayUtils {
 
     /**

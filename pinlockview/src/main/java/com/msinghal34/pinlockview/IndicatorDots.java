@@ -1,15 +1,17 @@
 package com.msinghal34.pinlockview;
 
 import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.annotation.IntDef;
-import androidx.core.view.ViewCompat;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -17,14 +19,15 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * It represents a set of indicator dots which when attached with {@link PinLockView}
  * can be used to indicate the current length of the input
- * <p>
- * Created by aritraroy on 01/06/16.
  */
 public class IndicatorDots extends LinearLayout {
 
     private static final int DEFAULT_PIN_LENGTH = 4;
+    private static final int DEFAULT_FILL_DRAWABLE = R.drawable.dot_filled;
+    private static final int DEFAULT_EMPTY_DRAWABLE = R.drawable.dot_empty;
     private final int mDotDiameter;
-    private final int mDotSpacing;
+    private final int mDotMargin;
+    private final int mDotColor;
     private final int mFillDrawable;
     private final int mEmptyDrawable;
     private int mPinLength;
@@ -42,18 +45,15 @@ public class IndicatorDots extends LinearLayout {
     public IndicatorDots(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.PinLockView);
-
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.IndicatorDots);
         try {
-            mDotDiameter = (int) typedArray.getDimension(R.styleable.PinLockView_dotDiameter, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_dot_diameter));
-            mDotSpacing = (int) typedArray.getDimension(R.styleable.PinLockView_dotSpacing, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_dot_spacing));
-            mFillDrawable = typedArray.getResourceId(R.styleable.PinLockView_dotFilledBackground,
-                    R.drawable.dot_filled);
-            mEmptyDrawable = typedArray.getResourceId(R.styleable.PinLockView_dotEmptyBackground,
-                    R.drawable.dot_empty);
-            mPinLength = typedArray.getInt(R.styleable.PinLockView_pinLength, DEFAULT_PIN_LENGTH);
-            mIndicatorType = typedArray.getInt(R.styleable.PinLockView_indicatorType,
-                    IndicatorType.FIXED);
+            mDotDiameter = (int) typedArray.getDimension(R.styleable.IndicatorDots_id_dotDiameter, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_dot_diameter));
+            mDotMargin = (int) typedArray.getDimension(R.styleable.IndicatorDots_id_dotMargin, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_dot_spacing));
+            mDotColor = typedArray.getColor(R.styleable.IndicatorDots_id_dotColor, ResourceUtils.getColor(getContext(), R.color.white));
+            mFillDrawable = typedArray.getResourceId(R.styleable.IndicatorDots_id_filledDotDrawable, DEFAULT_FILL_DRAWABLE);
+            mEmptyDrawable = typedArray.getResourceId(R.styleable.IndicatorDots_id_emptyDotDrawable, DEFAULT_EMPTY_DRAWABLE);
+            mPinLength = typedArray.getInt(R.styleable.PinLockView_plv_pinLength, DEFAULT_PIN_LENGTH);
+            mIndicatorType = typedArray.getInt(R.styleable.IndicatorDots_id_indicatorType, IndicatorType.FIXED);
         } finally {
             typedArray.recycle();
         }
@@ -62,16 +62,12 @@ public class IndicatorDots extends LinearLayout {
     }
 
     private void initView(Context context) {
-        ViewCompat.setLayoutDirection(this, ViewCompat.LAYOUT_DIRECTION_LTR);
+        setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+        setGravity(Gravity.CENTER);
         if (mIndicatorType == 0) {
             for (int i = 0; i < mPinLength; i++) {
                 View dot = new View(context);
                 emptyDot(dot);
-
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(mDotDiameter,
-                        mDotDiameter);
-                params.setMargins(mDotSpacing, 0, mDotSpacing, 0);
-                dot.setLayoutParams(params);
 
                 addView(dot);
             }
@@ -89,6 +85,12 @@ public class IndicatorDots extends LinearLayout {
             params.height = mDotDiameter;
             requestLayout();
         }
+    }
+
+    void error() {
+        ObjectAnimator shake = ObjectAnimator.ofFloat(this, "translationX", 0f, 100f, -100f, 0f);
+        shake.setDuration(200);
+        shake.start();
     }
 
     void updateDot(int length) {
@@ -114,11 +116,6 @@ public class IndicatorDots extends LinearLayout {
                     View dot = new View(getContext());
                     fillDot(dot);
 
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(mDotDiameter,
-                            mDotDiameter);
-                    params.setMargins(mDotSpacing, 0, mDotSpacing, 0);
-                    dot.setLayoutParams(params);
-
                     addView(dot, length - 1);
                 } else {
                     removeViewAt(length);
@@ -133,26 +130,28 @@ public class IndicatorDots extends LinearLayout {
 
     private void emptyDot(View dot) {
         dot.setBackgroundResource(mEmptyDrawable);
+        if (mEmptyDrawable == DEFAULT_EMPTY_DRAWABLE) {
+            dot.setBackgroundTintList(ColorStateList.valueOf(mDotColor));
+        }
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(mDotDiameter, mDotDiameter);
+        params.setMargins(mDotMargin, 0, mDotMargin, 0);
+        dot.setLayoutParams(params);
     }
 
     private void fillDot(View dot) {
         dot.setBackgroundResource(mFillDrawable);
-    }
-
-    public int getPinLength() {
-        return mPinLength;
+        if (mFillDrawable == DEFAULT_FILL_DRAWABLE) {
+            dot.setBackgroundTintList(ColorStateList.valueOf(mDotColor));
+        }
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(mDotDiameter, mDotDiameter);
+        params.setMargins(mDotMargin, 0, mDotMargin, 0);
+        dot.setLayoutParams(params);
     }
 
     public void setPinLength(int pinLength) {
         this.mPinLength = pinLength;
         removeAllViews();
         initView(getContext());
-    }
-
-    public
-    @IndicatorType
-    int getIndicatorType() {
-        return mIndicatorType;
     }
 
     public void setIndicatorType(@IndicatorType int type) {

@@ -1,28 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="PinLockView">
-        <attr name="pinLength" format="integer" />
-        <attr name="keypadTextColor" format="color" />
-        <attr name="keypadTextSize" format="dimension" />
-        <attr name="keypadButtonSize" format="dimension" />
-        <attr name="keypadVerticalSpacing" format="dimension" />
-        <attr name="keypadHorizontalSpacing" format="dimension" />
-        <attr name="keypadButtonBackgroundDrawable" format="integer" />
-        <attr name="keypadDeleteButtonDrawable" format="integer" />
-        <attr name="keypadDeleteButtonSize" format="dimension" />
-        <attr name="keypadShowDeleteButton" format="boolean" />
-        <attr name="keypadDeleteButtonPressedColor" format="color" />
-
-        <attr name="dotEmptyBackground" format="reference" />
-        <attr name="dotFilledBackground" format="reference" />
-        <attr name="dotDiameter" format="dimension" />
-        <attr name="dotSpacing" format="dimension" />
-        <attr name="indicatorType" format="enum">
+    <declare-styleable name="IndicatorDots">
+        <attr name="id_emptyDotDrawable" format="reference" />
+        <attr name="id_filledDotDrawable" format="reference" />
+        <attr name="id_dotDiameter" format="dimension" />
+        <attr name="id_dotMargin" format="dimension" />
+        <attr name="id_dotColor" format="color" />
+        <attr name="id_indicatorType" format="enum">
             <enum name="fixed" value="0" />
             <enum name="fill" value="1" />
             <enum name="fillWithAnimation" value="2" />
         </attr>
+    </declare-styleable>
 
+    <declare-styleable name="PinLockView">
+        <attr name="plv_pinLength" format="integer" />
+        <attr name="plv_textColor" format="color" />
+        <attr name="plv_textSize" format="dimension" />
+        <attr name="plv_buttonSize" format="dimension" />
+        <attr name="plv_buttonBackgroundColor" format="color" />
+        <attr name="plv_verticalSpacing" format="dimension" />
+        <attr name="plv_horizontalSpacing" format="dimension" />
+        <attr name="plv_vibrate" format="boolean" />
+        <attr name="plv_showDeleteButton" format="boolean" />
+        <attr name="plv_deleteButtonDrawable" format="reference" />
+        <attr name="plv_deleteButtonSize" format="dimension" />
     </declare-styleable>
 
 </resources>

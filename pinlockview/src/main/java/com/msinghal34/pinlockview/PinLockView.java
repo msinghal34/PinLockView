@@ -1,10 +1,14 @@
 package com.msinghal34.pinlockview;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.HapticFeedbackConstants;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
  * <p/>
  * It can also be used as dial pad for taking number inputs.
  * Optionally, {@link IndicatorDots} can be attached to this view to indicate the length of the input taken
- * Created by aritraroy on 31/05/16.
  */
 public class PinLockView extends RecyclerView {
 
@@ -23,12 +26,13 @@ public class PinLockView extends RecyclerView {
 
     private String mPin = "";
     private int mPinLength;
-    private int mHorizontalSpacing, mVerticalSpacing;
-    private int mTextColor, mDeleteButtonPressedColor;
+    private int mHorizontalMargin, mVerticalMargin;
+    @ColorInt
+    private int mTextColor, mButtonBackgroundColor;
     private int mTextSize, mButtonSize, mDeleteButtonSize;
-    private Drawable mButtonBackgroundDrawable;
-    private Drawable mDeleteButtonDrawable;
+    private int mDeleteButtonDrawableId;
     private boolean mShowDeleteButton;
+    private boolean mVibrate;
 
     private IndicatorDots mIndicatorDots;
     private PinLockAdapter mAdapter;
@@ -37,21 +41,25 @@ public class PinLockView extends RecyclerView {
             = new PinLockAdapter.OnNumberClickListener() {
         @Override
         public void onNumberClicked(int keyValue) {
-            if (mPin.length() < getPinLength()) {
+            maybeVibrate(HapticFeedbackConstants.KEYBOARD_TAP);
+            if (mPin.length() < mPinLength) {
                 mPin = mPin.concat(String.valueOf(keyValue));
 
                 if (isIndicatorDotsAttached()) {
                     mIndicatorDots.updateDot(mPin.length());
                 }
 
-                if (mPin.length() == 1) {
-                    mAdapter.setPinLength(mPin.length());
-                    mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
-                }
-
                 if (mPinLockListener != null) {
                     if (mPin.length() == mPinLength) {
-                        mPinLockListener.onComplete(mPin);
+                        if (mPinLockListener.onComplete(mPin)) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                maybeVibrate(HapticFeedbackConstants.CONTEXT_CLICK);
+                            }
+                            resetPinLockView();
+                        } else {
+                            maybeVibrate(HapticFeedbackConstants.LONG_PRESS);
+                            errorPinLockView();
+                        }
                     } else {
                         mPinLockListener.onPinChange(mPin.length(), mPin);
                     }
@@ -81,20 +89,16 @@ public class PinLockView extends RecyclerView {
             = new PinLockAdapter.OnDeleteClickListener() {
         @Override
         public void onDeleteClicked() {
-            if (mPin.length() > 0) {
+            maybeVibrate(HapticFeedbackConstants.VIRTUAL_KEY);
+            if (!mPin.isEmpty()) {
                 mPin = mPin.substring(0, mPin.length() - 1);
 
                 if (isIndicatorDotsAttached()) {
                     mIndicatorDots.updateDot(mPin.length());
                 }
 
-                if (mPin.length() == 0) {
-                    mAdapter.setPinLength(mPin.length());
-                    mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
-                }
-
                 if (mPinLockListener != null) {
-                    if (mPin.length() == 0) {
+                    if (mPin.isEmpty()) {
                         mPinLockListener.onEmpty();
                         clearInternalPin();
                     } else {
@@ -105,14 +109,6 @@ public class PinLockView extends RecyclerView {
                 if (mPinLockListener != null) {
                     mPinLockListener.onEmpty();
                 }
-            }
-        }
-
-        @Override
-        public void onDeleteLongClicked() {
-            resetPinLockView();
-            if (mPinLockListener != null) {
-                mPinLockListener.onEmpty();
             }
         }
     };
@@ -139,30 +135,29 @@ public class PinLockView extends RecyclerView {
         TypedArray typedArray = getContext().obtainStyledAttributes(attributeSet, R.styleable.PinLockView);
 
         try {
-            mPinLength = typedArray.getInt(R.styleable.PinLockView_pinLength, DEFAULT_PIN_LENGTH);
-            mHorizontalSpacing = (int) typedArray.getDimension(R.styleable.PinLockView_keypadHorizontalSpacing, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_horizontal_spacing));
-            mVerticalSpacing = (int) typedArray.getDimension(R.styleable.PinLockView_keypadVerticalSpacing, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_vertical_spacing));
-            mTextColor = typedArray.getColor(R.styleable.PinLockView_keypadTextColor, ResourceUtils.getColor(getContext(), R.color.white));
-            mTextSize = (int) typedArray.getDimension(R.styleable.PinLockView_keypadTextSize, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_text_size));
-            mButtonSize = (int) typedArray.getDimension(R.styleable.PinLockView_keypadButtonSize, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_button_size));
-            mDeleteButtonSize = (int) typedArray.getDimension(R.styleable.PinLockView_keypadDeleteButtonSize, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_delete_button_size));
-            mButtonBackgroundDrawable = typedArray.getDrawable(R.styleable.PinLockView_keypadButtonBackgroundDrawable);
-            mDeleteButtonDrawable = typedArray.getDrawable(R.styleable.PinLockView_keypadDeleteButtonDrawable);
-            mShowDeleteButton = typedArray.getBoolean(R.styleable.PinLockView_keypadShowDeleteButton, true);
-            mDeleteButtonPressedColor = typedArray.getColor(R.styleable.PinLockView_keypadDeleteButtonPressedColor, ResourceUtils.getColor(getContext(), R.color.greyish));
+            mPinLength = typedArray.getInt(R.styleable.PinLockView_plv_pinLength, DEFAULT_PIN_LENGTH);
+            mHorizontalMargin = (int) typedArray.getDimension(R.styleable.PinLockView_plv_horizontalSpacing, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_horizontal_spacing));
+            mVerticalMargin = (int) typedArray.getDimension(R.styleable.PinLockView_plv_verticalSpacing, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_vertical_spacing));
+            mTextColor = typedArray.getColor(R.styleable.PinLockView_plv_textColor, ResourceUtils.getColor(getContext(), R.color.white));
+            mButtonBackgroundColor = typedArray.getColor(R.styleable.PinLockView_plv_buttonBackgroundColor, ResourceUtils.getColor(getContext(), R.color.white));
+            mTextSize = (int) typedArray.getDimension(R.styleable.PinLockView_plv_textSize, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_text_size));
+            mButtonSize = (int) typedArray.getDimension(R.styleable.PinLockView_plv_buttonSize, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_button_size));
+            mDeleteButtonSize = (int) typedArray.getDimension(R.styleable.PinLockView_plv_deleteButtonSize, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_delete_button_size));
+            mDeleteButtonDrawableId = typedArray.getResourceId(R.styleable.PinLockView_plv_deleteButtonDrawable, R.drawable.ic_delete);
+            mShowDeleteButton = typedArray.getBoolean(R.styleable.PinLockView_plv_showDeleteButton, true);
+            mVibrate = typedArray.getBoolean(R.styleable.PinLockView_plv_vibrate, true);
         } finally {
             typedArray.recycle();
         }
 
         mCustomizationOptionsBundle = new CustomizationOptionsBundle();
         mCustomizationOptionsBundle.setTextColor(mTextColor);
+        mCustomizationOptionsBundle.setButtonBackgroundColor(mButtonBackgroundColor);
         mCustomizationOptionsBundle.setTextSize(mTextSize);
         mCustomizationOptionsBundle.setButtonSize(mButtonSize);
-        mCustomizationOptionsBundle.setButtonBackgroundDrawable(mButtonBackgroundDrawable);
-        mCustomizationOptionsBundle.setDeleteButtonDrawable(mDeleteButtonDrawable);
+        mCustomizationOptionsBundle.setDeleteButtonDrawable(mDeleteButtonDrawableId);
         mCustomizationOptionsBundle.setDeleteButtonSize(mDeleteButtonSize);
         mCustomizationOptionsBundle.setShowDeleteButton(mShowDeleteButton);
-        mCustomizationOptionsBundle.setDeleteButtonPressesColor(mDeleteButtonPressedColor);
 
         initView();
     }
@@ -176,8 +171,18 @@ public class PinLockView extends RecyclerView {
         mAdapter.setCustomizationOptions(mCustomizationOptionsBundle);
         setAdapter(mAdapter);
 
-        addItemDecoration(new ItemSpaceDecoration(mHorizontalSpacing, mVerticalSpacing, 3, false));
+        addItemDecoration(new ItemSpaceDecoration(mHorizontalMargin, mVerticalMargin, 3, false));
         setOverScrollMode(OVER_SCROLL_NEVER);
+    }
+
+    private void maybeVibrate(int keyCode) {
+        if (mVibrate) {
+            try {
+                performHapticFeedback(keyCode, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            } catch (Exception e) {
+                Log.e("PinLockView", "Exception while trying to vibrate", e);
+            }
+        }
     }
 
     /**
@@ -187,15 +192,6 @@ public class PinLockView extends RecyclerView {
      */
     public void setPinLockListener(PinLockListener pinLockListener) {
         this.mPinLockListener = pinLockListener;
-    }
-
-    /**
-     * Get the length of the current pin length
-     *
-     * @return the length of the pin
-     */
-    public int getPinLength() {
-        return mPinLength;
     }
 
     /**
@@ -212,11 +208,25 @@ public class PinLockView extends RecyclerView {
     }
 
     /**
+     * Enables vibration dynamically.
+     */
+    public void enableVibration() {
+        this.mVibrate = true;
+    }
+
+    /**
+     * Disables vibration dynamically.
+     */
+    public void disableVibration() {
+        this.mVibrate = false;
+    }
+
+    /**
      * Get the text color in the buttons
      *
      * @return the text color
      */
-    public int getTextColor() {
+    public @ColorInt int getTextColor() {
         return mTextColor;
     }
 
@@ -225,9 +235,29 @@ public class PinLockView extends RecyclerView {
      *
      * @param textColor the text color
      */
-    public void setTextColor(int textColor) {
+    public void setTextColor(@ColorInt int textColor) {
         this.mTextColor = textColor;
         mCustomizationOptionsBundle.setTextColor(textColor);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * Get the background color in the button
+     *
+     * @return the background color of button
+     */
+    public @ColorInt int getButtonBackgroundColor() {
+        return mButtonBackgroundColor;
+    }
+
+    /**
+     * Set the background color of the buttons dynamically
+     *
+     * @param buttonBackgroundColor the background color
+     */
+    public void setButtonBackgroundColor(@ColorInt int buttonBackgroundColor) {
+        this.mButtonBackgroundColor = buttonBackgroundColor;
+        mCustomizationOptionsBundle.setButtonBackgroundColor(buttonBackgroundColor);
         mAdapter.notifyDataSetChanged();
     }
 
@@ -272,42 +302,22 @@ public class PinLockView extends RecyclerView {
     }
 
     /**
-     * Get the current background drawable of the buttons, can be null
-     *
-     * @return the background drawable
-     */
-    public Drawable getButtonBackgroundDrawable() {
-        return mButtonBackgroundDrawable;
-    }
-
-    /**
-     * Set the background drawable of the buttons dynamically
-     *
-     * @param buttonBackgroundDrawable the background drawable
-     */
-    public void setButtonBackgroundDrawable(Drawable buttonBackgroundDrawable) {
-        this.mButtonBackgroundDrawable = buttonBackgroundDrawable;
-        mCustomizationOptionsBundle.setButtonBackgroundDrawable(buttonBackgroundDrawable);
-        mAdapter.notifyDataSetChanged();
-    }
-
-    /**
      * Get the drawable of the delete button
      *
-     * @return the delete button drawable
+     * @return the delete button drawable id.
      */
-    public Drawable getDeleteButtonDrawable() {
-        return mDeleteButtonDrawable;
+    public int getDeleteButtonDrawable() {
+        return mDeleteButtonDrawableId;
     }
 
     /**
      * Set the drawable of the delete button dynamically
      *
-     * @param deleteBackgroundDrawable the delete button drawable
+     * @param deleteBackgroundDrawableId the delete button drawable
      */
-    public void setDeleteButtonDrawable(Drawable deleteBackgroundDrawable) {
-        this.mDeleteButtonDrawable = deleteBackgroundDrawable;
-        mCustomizationOptionsBundle.setDeleteButtonDrawable(deleteBackgroundDrawable);
+    public void setDeleteButtonDrawable(int deleteBackgroundDrawableId) {
+        this.mDeleteButtonDrawableId = deleteBackgroundDrawableId;
+        mCustomizationOptionsBundle.setDeleteButtonDrawable(deleteBackgroundDrawableId);
         mAdapter.notifyDataSetChanged();
     }
 
@@ -351,26 +361,6 @@ public class PinLockView extends RecyclerView {
         mAdapter.notifyDataSetChanged();
     }
 
-    /**
-     * Get the delete button pressed/focused state color
-     *
-     * @return color of the button
-     */
-    public int getDeleteButtonPressedColor() {
-        return mDeleteButtonPressedColor;
-    }
-
-    /**
-     * Set the pressed/focused state color of the delete button
-     *
-     * @param deleteButtonPressedColor the color of the delete button
-     */
-    public void setDeleteButtonPressedColor(int deleteButtonPressedColor) {
-        this.mDeleteButtonPressedColor = deleteButtonPressedColor;
-        mCustomizationOptionsBundle.setDeleteButtonPressesColor(deleteButtonPressedColor);
-        mAdapter.notifyDataSetChanged();
-    }
-
     public int[] getCustomKeySet() {
         return mCustomKeySet;
     }
@@ -400,15 +390,27 @@ public class PinLockView extends RecyclerView {
      * and resetting the {@link IndicatorDots} if attached
      */
     public void resetPinLockView() {
-
         clearInternalPin();
-
-        mAdapter.setPinLength(mPin.length());
-        mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
 
         if (mIndicatorDots != null) {
             mIndicatorDots.updateDot(mPin.length());
         }
+    }
+
+    /**
+     * Resets the {@link PinLockView}, clearing the entered pin
+     * and resetting the {@link IndicatorDots} if attached
+     */
+    public void errorPinLockView() {
+        if (mIndicatorDots != null) {
+            mIndicatorDots.error();
+        }
+        ObjectAnimator shake = ObjectAnimator.ofFloat(this, "translationX", 0f, 100f, -100f, 0f);
+        shake.setDuration(200);
+        shake.start();
+        resetPinLockView();
+
+        postDelayed(() -> resetPinLockView(), 200L);
     }
 
     /**

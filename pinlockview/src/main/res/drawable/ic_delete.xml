@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/foreground"
+        android:drawable="@drawable/ic_delete_foreground" />
+    <item
+        android:id="@+id/background"
+        android:drawable="@drawable/ic_delete_background" />
+</layer-list>
