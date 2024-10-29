@@ -1,18 +1,21 @@
 package com.msinghal34.pinlockview;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
-import android.graphics.Rect;
-import android.os.Build;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -27,7 +30,6 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private CustomizationOptionsBundle mCustomizationOptionsBundle;
     private OnNumberClickListener mOnNumberClickListener;
     private OnDeleteClickListener mOnDeleteClickListener;
-    private int mPinLength;
 
     private int[] mKeyValues;
 
@@ -67,49 +69,14 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (position == 9) {
                 holder.mNumberButton.setVisibility(View.GONE);
             } else {
-                holder.mNumberButton.setText(String.valueOf(mKeyValues[position]));
                 holder.mNumberButton.setVisibility(View.VISIBLE);
-                holder.mNumberButton.setTag(mKeyValues[position]);
-            }
-
-            if (mCustomizationOptionsBundle != null) {
-                holder.mNumberButton.setTextColor(mCustomizationOptionsBundle.getTextColor());
-                if (mCustomizationOptionsBundle.getButtonBackgroundDrawable() != null) {
-                    if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                        holder.mNumberButton.setBackgroundDrawable(
-                                mCustomizationOptionsBundle.getButtonBackgroundDrawable());
-                    } else {
-                        holder.mNumberButton.setBackground(
-                                mCustomizationOptionsBundle.getButtonBackgroundDrawable());
-                    }
-                }
-                holder.mNumberButton.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                        mCustomizationOptionsBundle.getTextSize());
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                        mCustomizationOptionsBundle.getButtonSize(),
-                        mCustomizationOptionsBundle.getButtonSize());
-                holder.mNumberButton.setLayoutParams(params);
+                holder.mNumberText.setText(String.valueOf(mKeyValues[position]));
+                holder.mNumberText.setTag(mKeyValues[position]);
             }
         }
     }
 
     private void configureDeleteButtonHolder(DeleteViewHolder holder) {
-        if (holder != null) {
-            if (mCustomizationOptionsBundle.isShowDeleteButton() && mPinLength > 0) {
-                holder.mButtonImage.setVisibility(View.VISIBLE);
-                if (mCustomizationOptionsBundle.getDeleteButtonDrawable() != null) {
-                    holder.mButtonImage.setImageDrawable(mCustomizationOptionsBundle.getDeleteButtonDrawable());
-                }
-                holder.mButtonImage.setColorFilter(mCustomizationOptionsBundle.getTextColor(),
-                        PorterDuff.Mode.SRC_ATOP);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                        mCustomizationOptionsBundle.getDeleteButtonSize(),
-                        mCustomizationOptionsBundle.getDeleteButtonSize());
-                holder.mButtonImage.setLayoutParams(params);
-            } else {
-                holder.mButtonImage.setVisibility(View.GONE);
-            }
-        }
     }
 
     @Override
@@ -123,18 +90,6 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             return VIEW_TYPE_DELETE;
         }
         return VIEW_TYPE_NUMBER;
-    }
-
-    public int getPinLength() {
-        return mPinLength;
-    }
-
-    public void setPinLength(int pinLength) {
-        this.mPinLength = pinLength;
-    }
-
-    public int[] getKeyValues() {
-        return mKeyValues;
     }
 
     public void setKeyValues(int[] keyValues) {
@@ -155,24 +110,12 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return adjustedKeyValues;
     }
 
-    public OnNumberClickListener getOnItemClickListener() {
-        return mOnNumberClickListener;
-    }
-
     public void setOnItemClickListener(OnNumberClickListener onNumberClickListener) {
         this.mOnNumberClickListener = onNumberClickListener;
     }
 
-    public OnDeleteClickListener getOnDeleteClickListener() {
-        return mOnDeleteClickListener;
-    }
-
     public void setOnDeleteClickListener(OnDeleteClickListener onDeleteClickListener) {
         this.mOnDeleteClickListener = onDeleteClickListener;
-    }
-
-    public CustomizationOptionsBundle getCustomizationOptions() {
-        return mCustomizationOptionsBundle;
     }
 
     public void setCustomizationOptions(CustomizationOptionsBundle customizationOptionsBundle) {
@@ -185,78 +128,87 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public interface OnDeleteClickListener {
         void onDeleteClicked();
-
-        void onDeleteLongClicked();
     }
 
     public class NumberViewHolder extends RecyclerView.ViewHolder {
-        Button mNumberButton;
+        LinearLayout mNumberButton;
+        TextView mNumberText;
 
         public NumberViewHolder(final View itemView) {
             super(itemView);
             mNumberButton = itemView.findViewById(R.id.button);
-            mNumberButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mOnNumberClickListener != null) {
-                        mOnNumberClickListener.onNumberClicked((Integer) v.getTag());
-                    }
+            mNumberText = itemView.findViewById(R.id.number);
+
+            if (mCustomizationOptionsBundle != null) {
+                mNumberText.setTextColor(mCustomizationOptionsBundle.getTextColor());
+                mNumberText.setTextSize(TypedValue.COMPLEX_UNIT_PX, mCustomizationOptionsBundle.getTextSize());
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        mCustomizationOptionsBundle.getButtonSize(),
+                        mCustomizationOptionsBundle.getButtonSize());
+                mNumberButton.setLayoutParams(params);
+                mNumberButton.setBackgroundTintList(ColorStateList.valueOf(mCustomizationOptionsBundle.getButtonBackgroundColor()));
+            }
+
+            mNumberText.setOnClickListener(v -> {
+                if (mOnNumberClickListener != null) {
+                    mOnNumberClickListener.onNumberClicked((Integer) v.getTag());
                 }
             });
         }
     }
 
     public class DeleteViewHolder extends RecyclerView.ViewHolder {
-        LinearLayout mDeleteButton;
-        ImageView mButtonImage;
+        ImageView mDeleteImage;
 
         public DeleteViewHolder(final View itemView) {
             super(itemView);
-            mDeleteButton = itemView.findViewById(R.id.button);
-            mButtonImage = itemView.findViewById(R.id.buttonImage);
+            mDeleteImage = itemView.findViewById(R.id.image);
 
-            if (mCustomizationOptionsBundle.isShowDeleteButton() && mPinLength > 0) {
-                mDeleteButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (mOnDeleteClickListener != null) {
-                            mOnDeleteClickListener.onDeleteClicked();
-                        }
-                    }
-                });
+            if (mCustomizationOptionsBundle.isShowDeleteButton()) {
+                mDeleteImage.setVisibility(View.VISIBLE);
+                if (mCustomizationOptionsBundle.getDeleteButtonDrawable() == R.drawable.ic_delete) {
+                    try {
+                        LayerDrawable layeredDrawable = (LayerDrawable) AppCompatResources.getDrawable(mContext, R.drawable.ic_delete);
+                        if (layeredDrawable != null) {
+                            Drawable foreground = layeredDrawable.findDrawableByLayerId(R.id.foreground);
+                            Drawable background = layeredDrawable.findDrawableByLayerId(R.id.background);
 
-                mDeleteButton.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        if (mOnDeleteClickListener != null) {
-                            mOnDeleteClickListener.onDeleteLongClicked();
-                        }
-                        return true;
-                    }
-                });
-
-                mDeleteButton.setOnTouchListener(new View.OnTouchListener() {
-                    private Rect rect;
-
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                            mButtonImage.setColorFilter(mCustomizationOptionsBundle
-                                    .getDeleteButtonPressesColor());
-                            rect = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
-                        }
-                        if (event.getAction() == MotionEvent.ACTION_UP) {
-                            mButtonImage.clearColorFilter();
-                        }
-                        if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                            if (!rect.contains(v.getLeft() + (int) event.getX(),
-                                    v.getTop() + (int) event.getY())) {
-                                mButtonImage.clearColorFilter();
+                            if (foreground != null) {
+                                foreground.setColorFilter(new PorterDuffColorFilter(
+                                        mCustomizationOptionsBundle.getTextColor(),
+                                        PorterDuff.Mode.SRC_IN
+                                ));
                             }
+
+                            if (background != null) {
+                                background.setColorFilter(new PorterDuffColorFilter(
+                                        mCustomizationOptionsBundle.getButtonBackgroundColor(),
+                                        PorterDuff.Mode.SRC_IN
+                                ));
+                            }
+
+                            mDeleteImage.setImageDrawable(layeredDrawable);
                         }
-                        return false;
+                    } catch (Exception e) {
+                        Log.e("PinLockView", "Something went wrong while handling layer drawable");
+                        mDeleteImage.setImageResource(R.drawable.ic_delete);
+                        mDeleteImage.setColorFilter(mCustomizationOptionsBundle.getTextColor(), PorterDuff.Mode.SRC_ATOP);
+                    }
+                } else {
+                    mDeleteImage.setImageResource(mCustomizationOptionsBundle.getDeleteButtonDrawable());
+                }
+                LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(
+                        mCustomizationOptionsBundle.getDeleteButtonSize(),
+                        mCustomizationOptionsBundle.getDeleteButtonSize());
+                mDeleteImage.setLayoutParams(imageParams);
+
+                mDeleteImage.setOnClickListener(v -> {
+                    if (mOnDeleteClickListener != null) {
+                        mOnDeleteClickListener.onDeleteClicked();
                     }
                 });
+            } else {
+                mDeleteImage.setVisibility(View.GONE);
             }
         }
     }

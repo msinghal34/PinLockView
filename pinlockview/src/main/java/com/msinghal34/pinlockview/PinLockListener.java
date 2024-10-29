@@ -14,7 +14,7 @@ public interface PinLockListener {
      *
      * @param pin the complete pin
      */
-    void onComplete(String pin);
+    Boolean onComplete(String pin);
 
 
     /**

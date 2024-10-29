@@ -1,13 +1,13 @@
 # PinLockView
 A clean, minimalistic, easy-to-use and highly customizable pin lock custom view for Android.
 
-![PinLockView](https://github.com/msinghal34/PinLockView/blob/master/screens/logo.png)
+![PinLockView](screens/logo.png)
 
 This library allows you to implement a pin lock mechanism in your app **easily and quickly**. There are **plenty of customization options** available to change the look-and-feel of this view to match your app's theme.
 
 You can also use it as a dial pad to dial numbers. There are several other use cases of this library and is not restricted to only pin locking.
 
-![PinLockView](https://github.com/msinghal34/PinLockView/blob/master/screens/promo.png)
+![PinLockView](screens/promo.png)
 
 ## Usage
 
@@ -23,7 +23,7 @@ allprojects {
 ```
 In your application build file:
 ``` gradle
-    implementation 'com.msinghal34.pinlockview:pinlockview:2.1.0'
+implementation 'com.msinghal34.pinlockview:pinlockview:3.0.0'
 ```
 
 ### XML
@@ -31,28 +31,24 @@ In your application build file:
 Place the view in your XML layout file.
 
 ```xml
-    <com.msinghal34.pinlockview.PinLockView
-        android:id="@+id/pin_lock_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+<com.msinghal34.pinlockview.PinLockView
+    android:id="@+id/pin_lock_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
 ```
 
 ### Java
 Reference the view in code and add a listener to it.
 
 ```java
-    mPinLockView = (PinLockView) findViewById(R.id.pin_lock_view);
-    mPinLockView.setPinLockListener(mPinLockListener);
-```
-
-Implement the listener interface as follows,
-
-```java
+mPinLockView = (PinLockView) findViewById(R.id.pin_lock_view);
+mPinLockView.setPinLockListener(mPinLockListener);
 private PinLockListener mPinLockListener = new PinLockListener() {
     @Override
-    public void onComplete(String pin) {
+    public Boolean onComplete(String pin) {
         Log.d(TAG, "Pin complete: " + pin);
-     }
+        return true;
+    }
 
     @Override
     public void onEmpty() {
@@ -61,9 +57,30 @@ private PinLockListener mPinLockListener = new PinLockListener() {
 
     @Override
     public void onPinChange(int pinLength, String intermediatePin) {
-         Log.d(TAG, "Pin changed, new length " + pinLength + " with intermediate pin " + intermediatePin);
+        Log.d(TAG, "Pin changed, new length " + pinLength + " with intermediate pin " + intermediatePin);
     }
 };
+```
+
+### Kotlin
+Reference the view in code and add a listener to it.
+
+```java
+val mPinLockView = findViewById<PinLockView>(R.id.pin_lock_view)
+mPinLockView.setPinLockListener(object : PinLockListener {
+    override fun onComplete(pin: String?): Boolean {
+        Timber.i("Pin entered: $pin")
+        return true
+    }
+
+    override fun onEmpty() {
+        Timber.i("Pin empty")
+    }
+
+    override fun onPinChange(pinLength: Int, intermediatePin: String?) {
+        Timber.i("Pin changed, new length: $pinLength with intermediate pin: $intermediatePin")
+    }
+})
 ```
 
 And that's it! Your PinLockView is ready to rock.
@@ -79,6 +96,7 @@ This **view has been decoupled from the PinLockView** so that you can optionally
 
 Add the view to you XML layout, generally placed above your PinLockView,
 
+### XML
 ```xml
  <com.msinghal34.pinlockview.IndicatorDots
         android:id="@+id/indicator_dots"
@@ -87,8 +105,16 @@ Add the view to you XML layout, generally placed above your PinLockView,
 ```
 then find a reference to the view and attach it to the parent PinLockView,
 
+### Java
 ```java
 mIndicatorDots = (IndicatorDots) findViewById(R.id.indicator_dots);
+mPinLockView.attachIndicatorDots(mIndicatorDots);
+```
+
+
+### Kotlin
+```java
+val mIndicatorDots = findViewById<IndicatorDots>(R.id.indicator_dots)
 mPinLockView.attachIndicatorDots(mIndicatorDots);
 ```
 
@@ -96,34 +122,37 @@ You **MUST** attach it to the PinLockView, otherwise it will be simply ignored.
 
 ## Theming
 
-There are several theming options available through XML attributes which you can use to completely change the look-and-feel of this view to match the theme of your app.
+There are several theming options available through XML attributes which you can use to completely change the look-and-feel of this view to match the theme of your app. The values shown in example are the default ones.
 
+**Customization for PinLock view**
 ```xml
-  app:pinLength="6"                                       // Change the pin length
-  app:keypadTextColor="#E6E6E6"                           // Change the color of the keypad text
-  app:keypadTextSize="16dp"                               // Change the text size in the keypad
-  app:keypadButtonSize="72dp"                             // Change the size of individual keys/buttons
-  app:keypadVerticalSpacing="24dp"                        // Alters the vertical spacing between the keypad buttons
-  app:keypadHorizontalSpacing="36dp"                      // Alters the horizontal spacing between the keypad buttons
-  app:keypadButtonBackgroundDrawable="@drawable/bg"       // Set a custom background drawable for the buttons
-  app:keypadDeleteButtonDrawable="@drawable/ic_back"      // Set a custom drawable for the delete button
-  app:keypadDeleteButtonSize="16dp"                       // Change the size of the delete button icon in the keypad
-  app:keypadShowDeleteButton="false"                      // Should show the delete button, default is true
-  app:keypadDeleteButtonPressedColor="#C8C8C8"            // Change the pressed/focused state color of the delete button
-  
-  app:dotEmptyBackground="@drawable/empty"                // Customize the empty state of the dots
-  app:dotFilledBackground"@drawable/filled"               // Customize the filled state of the dots
-  app:dotDiameter="12dp"                                  // Change the diameter of the dots
-  app:dotSpacing="16dp"                                   // Change the spacing between individual dots
-  app:indicatorType="fillWithAnimation"                   // Choose between "fixed", "fill" and "fillWithAnimation"
+  app:plv_pinLength="4"                                       // Length of the pin
+  app:plv_textColor="#FFFFFF"                                 // Color of the digits and the delete drawable
+  app:plv_textSize="24sp"                                     // Font size of digits in the keypad
+  app:plv_buttonSize="64dp"                                   // Size of individual keys/buttons
+  app:plv_buttonBackgroundColor="#FFFFFF"                     // Keypad buttons' background color. Alpha of 0.2 is applied to color internally
+  app:plv_verticalSpacing="12dp"                              // Vertical space between the keypad buttons
+  app:plv_horizontalSpacing="32dp"                            // Horizontal space between the keypad buttons
+  app:plv_vibrate="true"                                      // Whether to vibrate on key press and success/error events
+  app:plv_showDeleteButton="true"                             // Whether to show the delete button or not
+  app:plv_deleteButtonDrawable="@drawable/ic_delete"          // Customize drawable for the delete button
+  app:plv_deleteButtonSize="48dp"                             // Size of the delete button drawable in the keypad
+```
+
+
+**Customization for Indicator Dots**
+```xml
+  app:id_emptyDotDrawable="@drawable/dot_empty"                // Customize the empty dot drawable
+  app:id_filledDotDrawable="@drawable/dot_filled"              // Customize the filled dot drawable
+  app:id_dotDiameter="14dp"                                    // Diameter of the dots
+  app:id_dotMargin="12dp"                                      // Margin between dots
+  app:id_dotColor="#FFFFFF"                                    // Color of filled and empty dots, only applicable if custom drawables for dots are not provided
+  app:id_indicatorType="fixed"                                 // Available options: "fixed", "fill" and "fillWithAnimation"
 ```
 
 # Contribution
 
 This library is quite exhaustive and offers a lot of customization options. If you find a bug or would like to improve any aspect of it, feel free to contribute with pull requests.
-
-# Forked from
-https://github.com/aritraroy/PinLockView
 
 # License
 

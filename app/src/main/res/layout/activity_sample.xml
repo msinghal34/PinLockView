@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/mine_shaft"
+    android:background="@android:color/black"
     tools:context="com.msinghal34.pinlockviewapp.SampleActivity">
 
     <ImageView
@@ -26,7 +25,7 @@
         android:gravity="center"
         android:maxLines="1"
         android:text="Welcome"
-        android:textColor="@color/white"
+        android:textColor="@android:color/white"
         android:textSize="34sp" />
 
     <com.msinghal34.pinlockview.IndicatorDots
@@ -43,10 +42,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/indicator_dots"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        app:keypadButtonSize="72dp"
-        app:keypadShowDeleteButton="true"
-        app:keypadTextColor="@color/white"
-        app:keypadTextSize="18dp" />
+        android:layout_marginTop="24dp" />
 
 </RelativeLayout>

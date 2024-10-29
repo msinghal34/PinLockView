@@ -1,7 +1,5 @@
 package com.msinghal34.pinlockview;
 
-import android.graphics.drawable.Drawable;
-
 /**
  * The customization options for the buttons in {@link PinLockView}
  * passed to the {@link PinLockAdapter} to decorate the individual views
@@ -11,13 +9,12 @@ import android.graphics.drawable.Drawable;
 public class CustomizationOptionsBundle {
 
     private int textColor;
+    private int buttonBackgroundColor;
     private int textSize;
     private int buttonSize;
-    private Drawable buttonBackgroundDrawable;
-    private Drawable deleteButtonDrawable;
+    private int deleteButtonDrawableId;
     private int deleteButtonSize;
     private boolean showDeleteButton;
-    private int deleteButtonPressesColor;
 
     public CustomizationOptionsBundle() {
     }
@@ -28,6 +25,14 @@ public class CustomizationOptionsBundle {
 
     public void setTextColor(int textColor) {
         this.textColor = textColor;
+    }
+
+    public int getButtonBackgroundColor() {
+        return buttonBackgroundColor;
+    }
+
+    public void setButtonBackgroundColor(int buttonBackgroundColor) {
+        this.buttonBackgroundColor = buttonBackgroundColor;
     }
 
     public int getTextSize() {
@@ -46,20 +51,12 @@ public class CustomizationOptionsBundle {
         this.buttonSize = buttonSize;
     }
 
-    public Drawable getButtonBackgroundDrawable() {
-        return buttonBackgroundDrawable;
+    public int getDeleteButtonDrawable() {
+        return deleteButtonDrawableId;
     }
 
-    public void setButtonBackgroundDrawable(Drawable buttonBackgroundDrawable) {
-        this.buttonBackgroundDrawable = buttonBackgroundDrawable;
-    }
-
-    public Drawable getDeleteButtonDrawable() {
-        return deleteButtonDrawable;
-    }
-
-    public void setDeleteButtonDrawable(Drawable deleteButtonDrawable) {
-        this.deleteButtonDrawable = deleteButtonDrawable;
+    public void setDeleteButtonDrawable(int deleteButtonDrawableId) {
+        this.deleteButtonDrawableId = deleteButtonDrawableId;
     }
 
     public int getDeleteButtonSize() {
@@ -76,13 +73,5 @@ public class CustomizationOptionsBundle {
 
     public void setShowDeleteButton(boolean showDeleteButton) {
         this.showDeleteButton = showDeleteButton;
-    }
-
-    public int getDeleteButtonPressesColor() {
-        return deleteButtonPressesColor;
-    }
-
-    public void setDeleteButtonPressesColor(int deleteButtonPressesColor) {
-        this.deleteButtonPressesColor = deleteButtonPressesColor;
     }
 }
