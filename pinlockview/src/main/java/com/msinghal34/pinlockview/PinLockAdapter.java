@@ -74,6 +74,19 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (mCustomizationOptionsBundle != null) {
                 holder.mNumberText.setTextColor(mCustomizationOptionsBundle.getTextColor());
                 holder.mNumberText.setTextSize(TypedValue.COMPLEX_UNIT_PX, mCustomizationOptionsBundle.getTextSize());
+
+                if (mCustomizationOptionsBundle.showButtonPressAnimation()) {
+                    try {
+                        TypedValue outValue = new TypedValue();
+                        mContext.getTheme().resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, outValue, true);
+                        holder.mNumberText.setBackgroundResource(outValue.resourceId);
+                    } catch (Exception e) {
+                        Log.e("PinLockView", "Exception while setting press feedback", e);
+                    }
+                } else {
+                    holder.mNumberText.setBackground(null);
+                }
+
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                         mCustomizationOptionsBundle.getButtonSize(),
                         mCustomizationOptionsBundle.getButtonSize());
@@ -90,7 +103,7 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private void configureDeleteButtonHolder(DeleteViewHolder holder) {
-        if (mCustomizationOptionsBundle.isShowDeleteButton()) {
+        if (mCustomizationOptionsBundle.showDeleteButton()) {
             holder.mDeleteImage.setVisibility(View.VISIBLE);
             if (mCustomizationOptionsBundle.getDeleteButtonDrawable() == R.drawable.ic_delete) {
                 try {

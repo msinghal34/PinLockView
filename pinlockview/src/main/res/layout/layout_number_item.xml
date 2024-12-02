@@ -8,14 +8,12 @@
     android:focusable="true"
     android:gravity="center">
 
+    <!-- These weird clickable settings are needed for a good looking ripple effect on clicking a number -->
     <TextView
         android:id="@+id/number"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:adjustViewBounds="true"
-        android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="false"
         android:focusable="false"
-        android:gravity="center"
-        android:scaleType="fitCenter" />
+        android:gravity="center" />
 </LinearLayout>

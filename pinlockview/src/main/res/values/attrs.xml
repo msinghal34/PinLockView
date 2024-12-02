@@ -25,6 +25,7 @@
         <attr name="plv_showDeleteButton" format="boolean" />
         <attr name="plv_deleteButtonDrawable" format="reference" />
         <attr name="plv_deleteButtonSize" format="dimension" />
+        <attr name="plv_showButtonPressAnimation" format="boolean" />
     </declare-styleable>
 
 </resources>

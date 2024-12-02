@@ -32,6 +32,7 @@ public class PinLockView extends RecyclerView {
     private int mTextSize, mButtonSize, mDeleteButtonSize;
     private int mDeleteButtonDrawableId;
     private boolean mShowDeleteButton;
+    private boolean mShowButtonPressAnimation;
     private boolean mVibrate;
 
     private IndicatorDots mIndicatorDots;
@@ -145,6 +146,7 @@ public class PinLockView extends RecyclerView {
             mDeleteButtonSize = (int) typedArray.getDimension(R.styleable.PinLockView_plv_deleteButtonSize, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_delete_button_size));
             mDeleteButtonDrawableId = typedArray.getResourceId(R.styleable.PinLockView_plv_deleteButtonDrawable, R.drawable.ic_delete);
             mShowDeleteButton = typedArray.getBoolean(R.styleable.PinLockView_plv_showDeleteButton, true);
+            mShowButtonPressAnimation = typedArray.getBoolean(R.styleable.PinLockView_plv_showButtonPressAnimation, true);
             mVibrate = typedArray.getBoolean(R.styleable.PinLockView_plv_vibrate, true);
         } finally {
             typedArray.recycle();
@@ -158,6 +160,7 @@ public class PinLockView extends RecyclerView {
         mCustomizationOptionsBundle.setDeleteButtonDrawable(mDeleteButtonDrawableId);
         mCustomizationOptionsBundle.setDeleteButtonSize(mDeleteButtonSize);
         mCustomizationOptionsBundle.setShowDeleteButton(mShowDeleteButton);
+        mCustomizationOptionsBundle.setShowButtonPressAnimation(mShowButtonPressAnimation);
 
         initView();
     }
@@ -219,6 +222,22 @@ public class PinLockView extends RecyclerView {
      */
     public void disableVibration() {
         this.mVibrate = false;
+    }
+
+    /**
+     * Enable visual animation on pressing keypad button.
+     */
+    public void enableButtonPressAnimation() {
+        mCustomizationOptionsBundle.setShowButtonPressAnimation(true);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * Disable visual animation on pressing keypad button.
+     */
+    public void disableButtonPressAnimation() {
+        mCustomizationOptionsBundle.setShowButtonPressAnimation(false);
+        mAdapter.notifyDataSetChanged();
     }
 
     /**

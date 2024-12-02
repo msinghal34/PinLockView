@@ -137,6 +137,7 @@ There are several theming options available through XML attributes which you can
   app:plv_showDeleteButton="true"                             // Whether to show the delete button or not
   app:plv_deleteButtonDrawable="@drawable/ic_delete"          // Customize drawable for the delete button
   app:plv_deleteButtonSize="48dp"                             // Size of the delete button drawable in the keypad
+  app:plv_showButtonPressAnimation="true"                     // Whether to show animation on pressing keypad button or not
 ```
 
 

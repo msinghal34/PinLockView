@@ -15,6 +15,7 @@ public class CustomizationOptionsBundle {
     private int deleteButtonDrawableId;
     private int deleteButtonSize;
     private boolean showDeleteButton;
+    private boolean showButtonPressAnimation;
 
     public CustomizationOptionsBundle() {
     }
@@ -67,11 +68,19 @@ public class CustomizationOptionsBundle {
         this.deleteButtonSize = deleteButtonSize;
     }
 
-    public boolean isShowDeleteButton() {
+    public boolean showDeleteButton() {
         return showDeleteButton;
     }
 
     public void setShowDeleteButton(boolean showDeleteButton) {
         this.showDeleteButton = showDeleteButton;
+    }
+
+    public boolean showButtonPressAnimation() {
+        return showButtonPressAnimation;
+    }
+
+    public void setShowButtonPressAnimation(boolean showButtonPressAnimation) {
+        this.showButtonPressAnimation = showButtonPressAnimation;
     }
 }
