@@ -23,7 +23,7 @@ allprojects {
 ```
 In your application build file:
 ``` gradle
-implementation 'com.github.msinghal34:pinlockview:3.1.0'
+implementation 'com.github.msinghal34:pinlockview:3.2.0'
 ```
 
 ### XML

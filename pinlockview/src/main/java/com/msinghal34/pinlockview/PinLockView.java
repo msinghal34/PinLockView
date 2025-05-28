@@ -12,6 +12,8 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Arrays;
+
 /**
  * Represents a numeric lock view which can used to taken numbers as input.
  * The length of the input can be customized using {@link PinLockView#setPinLength(int)}, the default value being 4
@@ -397,6 +399,12 @@ public class PinLockView extends RecyclerView {
 
         if (mAdapter != null) {
             mAdapter.setKeyValues(mCustomKeySet);
+        }
+    }
+
+    public void disableLayoutShuffling() {
+        if (mAdapter != null) {
+            mAdapter.setKeyValues(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
         }
     }
 

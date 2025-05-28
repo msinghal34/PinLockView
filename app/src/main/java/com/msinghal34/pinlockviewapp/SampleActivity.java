@@ -44,5 +44,6 @@ public class SampleActivity extends AppCompatActivity {
         IndicatorDots mIndicatorDots = findViewById(R.id.indicator_dots);
         mPinLockView.attachIndicatorDots(mIndicatorDots);
         mPinLockView.setPinLockListener(mPinLockListener);
+        mPinLockView.enableLayoutShuffling();
     }
 }
